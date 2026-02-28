@@ -5,7 +5,7 @@
 ** manage_camera
 */
 
-#include "../include/my_world.h"
+#include "my_world.h"
 
 void manage_camera_pos(camera_t *camera)
 {
@@ -23,9 +23,8 @@ void manage_camera_pos(camera_t *camera)
         camera->angle_y -= ROTATE_SPEED;
     if (sfKeyboard_isKeyPressed(sfKeyLeft))
         camera->angle_x -= ROTATE_SPEED;
-    if (sfKeyboard_isKeyPressed(sfKeyRight)){
+    if (sfKeyboard_isKeyPressed(sfKeyRight))
         camera->angle_x += ROTATE_SPEED;
-    }
     if (sfKeyboard_isKeyPressed(sfKeyE))
         camera->zoom += ZOOM_SPEED;
     if (sfKeyboard_isKeyPressed(sfKeyA))

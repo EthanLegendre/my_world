@@ -7,7 +7,8 @@
 
 #include "../../../include/my_world.h"
 
-void manage_rendus_mode(sfConvexShape ***convex_tab1, sfConvexShape ***convex_tab2, int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d, camera_t *camera)
+void manage_rendus_mode(sfConvexShape ***convex_tab1,
+    int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info)
 {
-    fit_convex_by_map(convex_tab1, map_2d, map_3d, camera);
+    fit_convex_by_map(convex_tab1, map_3d, camera, game_info);
 }

@@ -8,34 +8,33 @@
 #include "../../../include/my_world.h"
 #include <math.h>
 
-static inline float deg_to_rad(float deg)
+#ifndef PI_F
+    #define PI_F 3.14159265358979323846f
+#endif
+
+static
+float deg_to_rad(float deg)
 {
-    return deg * (float)M_PI / 180.f;
+    return deg * PI_F / 180.f;
 }
 
 sfVector2f project_iso_point(int x, int y, int z, camera_t *camera)
 {
-    float ax   = deg_to_rad(camera->angle_x);
-    float ay = deg_to_rad(camera->angle_y);
-    float cx = (MAP_X - 1) * SPACE / 2.f;
-    float cy = (MAP_Y - 1) * SPACE / 2.f;
+    const float cx = (MAP_X - 1) * SPACE / 2.f;
+    const float cy = (MAP_Y - 1) * SPACE / 2.f;
     float X = (float)x - cx;
     float Y = (float)y - cy;
     float Z = (float)z;
-    float x1 =  cosf(ax) * X - sinf(ax) * Y;
-    float y1 =  sinf(ax) * X + cosf(ax) * Y;
-    float z1 =  Z;
-    float x2 = x1;
-    float y2 =  cosf(ay) * y1 - sinf(ay) * z1;
-    float z2 =  sinf(ay) * y1 + cosf(ay) * z1;
-    float screen_x = x2;
-    float screen_y = y2;
-    sfVector2u size = (sfVector2u){1920u, 1080u};
+    float cos_x = cosf(deg_to_rad(camera->angle_x));
+    float sin_x = sinf(deg_to_rad(camera->angle_x));
+    float cos_y = cosf(deg_to_rad(camera->angle_y));
+    float sin_y = sinf(deg_to_rad(camera->angle_y));
+    float screen_x = cos_x * X - sin_x * Y;
+    float screen_y = cos_y * (sin_x * X + cos_x * Y) - sin_y * Z;
 
     screen_x *= camera->zoom;
     screen_y *= camera->zoom;
-    screen_x += size.x / 2.f + camera->x;
-    screen_y += size.y / 2.f + camera->y;
-
+    screen_x += WINDOW_SIZE_X / 2.f + camera->x;
+    screen_y += WINDOW_SIZE_Y / 2.f + camera->y;
     return (sfVector2f){screen_x, screen_y};
 }

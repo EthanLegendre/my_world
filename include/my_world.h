@@ -8,6 +8,8 @@
 #ifndef MY_WORLD
     #define MY_WORLD
     #include "../include/biglib.h"
+    #include "../lib/csfml/includes/init_project.h"
+    #include "../lib/csfml/includes/textures_simple.h"
     #include "SFML/System.h"
     #include "SFML/Window.h"
     #include "SFML/Audio.h"
@@ -30,8 +32,7 @@
     #define MAX_HEIGHT_PERLIN 255
 
 typedef struct init {
-    sfVideoMode mode;
-    sfEvent event;
+    csfml_context_t *ctx;
     sfRenderWindow *window;
 }init_t;
 
@@ -79,6 +80,17 @@ typedef struct game_info{
     sfTexture *sand_texture;
 }game_info_t;
 
+typedef struct world_runtime_s {
+    init_t *init;
+    camera_t *camera;
+    game_info_t *game_info;
+    int map_3d[MAP_Y][MAP_X];
+    sfConvexShape ***rendus_map;
+    sfConvexShape ***rendus_map2;
+    sfVector2f **map_2d;
+    int rendus_dirty;
+} world_runtime_t;
+
 init_t init(void);
 void game_loop(init_t *init, camera_t *camera, game_info_t *game_info);
 void game_end(init_t *init);
@@ -93,11 +105,11 @@ void change_z_by_select_point(int map_3d[MAP_Y][MAP_X], sfVector2i mouse_pos, in
 sfVector2f project_iso_point(int x, int y, int z, camera_t *camera);
 void update_edit_map(int map_3d[MAP_Y][MAP_X], sfVector2i mouse_pos, camera_t *camera);
 sfConvexShape ***mem_alloc_2d_array_sfVConvex(int nbr_line, int nbr_column);
-int draw_rendus_map(sfRenderWindow *window, sfVector2f **map_2d, int map_3d[MAP_Y][MAP_X], sfConvexShape ***convex_tab);
-void fit_convex_by_map(sfConvexShape ***tab, sfVector2f **map_2d, int map_3d[MAP_Y][MAP_X], camera_t *camera);
+int draw_rendus_map(sfRenderWindow *window, sfConvexShape ***convex_tab);
+void fit_convex_by_map(sfConvexShape ***tab, int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info);
 sfConvexShape ***create_convex_array_empty(void);
 void manage_edit_mode(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d, camera_t *camera, game_info_t *game_info);
-void manage_rendus_mode(sfConvexShape ***convex_tab1, sfConvexShape ***convex_tab2, int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d, camera_t *camera);
+void manage_rendus_mode(sfConvexShape ***convex_tab1, int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info);
 void update_iso_point(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d, camera_t *camera);
 void fit_convex_by_map2(sfConvexShape ***tab, int map_3d[MAP_Y][MAP_X], camera_t *camera);
 

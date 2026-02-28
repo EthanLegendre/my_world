@@ -7,53 +7,146 @@
 
 #include "../../../include/my_world.h"
 
-void fit_convex_by_map(sfConvexShape ***tab, sfVector2f **map_2d, int map_3d[MAP_Y][MAP_X], camera_t *camera)
+#ifndef PI_F
+    #define PI_F 3.14159265358979323846f
+#endif
+
+static
+int snap_height(int z)
 {
-    sfTexture *water_texture = sfTexture_createFromFile("assets/water.png", NULL);
-    sfTexture *herbe_texture = sfTexture_createFromFile("assets/isometric tileset/separated images/tile_027.png", NULL);
-    sfTexture *rock_texture = sfTexture_createFromFile("assets/rock3.png", NULL);
+    int rem = z % SPACE;
 
+    if (rem == 0)
+        return z;
+    return z + (SPACE - rem);
+}
 
-    for (int i = 0; i < MAP_Y; i++){
-        for (int j = 0; j < MAP_X; j++){
-            if (map_3d[i][j] % SPACE != 0)
-                map_3d[i][j] += SPACE - (map_3d[i][j] % SPACE);
-        }
-    }
+static
+sfTexture *get_texture_for_height(int z, game_info_t *game_info)
+{
+    if (!game_info)
+        return NULL;
+    if (z < 3000)
+        return game_info->water_texture;
+    if (z <= 3100)
+        return game_info->sand_texture;
+    if (z <= 4000)
+        return game_info->herbe_texture;
+    if (z <= 5000)
+        return game_info->snow_texture;
+    return NULL;
+}
+
+static
+sfVector2f project_iso_fast(float x, float y, float z,
+    const camera_t *camera, float cos_x, float sin_x, float cos_y,
+    float sin_y, float cx, float cy, float center_x, float center_y,
+    float zoom)
+{
+    float rel_x = x - cx;
+    float rel_y = y - cy;
+    float screen_x = (cos_x * rel_x - sin_x * rel_y) * zoom + center_x;
+    float screen_y = (cos_y * (sin_x * rel_x + cos_x * rel_y) - sin_y * z)
+        * zoom + center_y;
+
+    (void)camera;
+    return (sfVector2f){screen_x, screen_y};
+}
+
+void fit_convex_by_map(sfConvexShape ***tab,
+    int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info)
+{
+    sfTexture *current_texture = NULL;
+    float angle_x = camera->angle_x * PI_F / 180.f;
+    float angle_y = camera->angle_y * PI_F / 180.f;
+    float cos_x = cosf(angle_x);
+    float sin_x = sinf(angle_x);
+    float cos_y = cosf(angle_y);
+    float sin_y = sinf(angle_y);
+    float cx = (MAP_X - 1) * SPACE / 2.f;
+    float cy = (MAP_Y - 1) * SPACE / 2.f;
+    float center_x = WINDOW_SIZE_X / 2.f + camera->x;
+    float center_y = WINDOW_SIZE_Y / 2.f + camera->y;
+    float zoom = camera->zoom;
+    int z = 0;
+    int x = 0;
+    int y = 0;
+
     for (int i = 0; i < MAP_Y - 1; i++) {
         for (int j = 0; j < MAP_X - 1; j++) {
-            sfConvexShape_setPoint(tab[i][j], 0, project_iso_point(SPACE * j, SPACE * i, map_3d[i][j], camera));
-            sfConvexShape_setPoint(tab[i][j], 1, project_iso_point(SPACE * (j + 1), SPACE * i, map_3d[i][j], camera));
-            sfConvexShape_setPoint(tab[i][j], 2, project_iso_point(SPACE * (j + 1), SPACE * (i + 1), map_3d[i][j], camera));
-            sfConvexShape_setPoint(tab[i][j], 3, project_iso_point(SPACE * j, SPACE * (i + 1), map_3d[i][j], camera));
-            sfConvexShape_setFillColor(tab[i][j], change_color_by_z(map_3d[i][j]));
-            /*if (map_3d[i][j] < 3000)
-                sfConvexShape_setTexture(tab[i][j], water_texture, sfFalse);
-            else if (map_3d[i][j] >= 3100 && map_3d[i][j] <= 4000)
-                sfConvexShape_setTexture(tab[i][j], herbe_texture, sfFalse);
-            else if (map_3d[i][j] <= 5000 && map_3d[i][j] >= 4000)
-                sfConvexShape_setTexture(tab[i][j], rock_texture, sfFalse);
-            else*/
-            sfConvexShape_setFillColor(tab[i][j], change_color_by_z(map_3d[i][j]));
+            z = snap_height(map_3d[i][j]);
+            x = SPACE * j;
+            y = SPACE * i;
+            sfConvexShape_setPoint(tab[i][j], 0,
+                project_iso_fast((float)x, (float)y, (float)z, camera,
+                    cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            sfConvexShape_setPoint(tab[i][j], 1,
+                project_iso_fast((float)(x + SPACE), (float)y, (float)z,
+                    camera, cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            sfConvexShape_setPoint(tab[i][j], 2,
+                project_iso_fast((float)(x + SPACE), (float)(y + SPACE),
+                    (float)z, camera, cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            sfConvexShape_setPoint(tab[i][j], 3,
+                project_iso_fast((float)x, (float)(y + SPACE), (float)z,
+                    camera, cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            current_texture = get_texture_for_height(z, game_info);
+            if (current_texture) {
+                sfConvexShape_setTexture(tab[i][j], current_texture, sfFalse);
+                sfConvexShape_setFillColor(tab[i][j], sfWhite);
+            } else {
+                sfConvexShape_setTexture(tab[i][j], NULL, sfFalse);
+                sfConvexShape_setFillColor(tab[i][j],
+                    change_color_by_z(z));
+            }
         }
     }
 }
 
 void fit_convex_by_map2(sfConvexShape ***tab, int map_3d[MAP_Y][MAP_X], camera_t *camera)
 {
-    for (int i = 0; i < MAP_Y; i++){
-        for (int j = 0; j < MAP_X; j++){
-            if (map_3d[i][j] % SPACE != 0)
-                map_3d[i][j] += SPACE - (map_3d[i][j] % SPACE);
-        }
-    }
+    float angle_x = camera->angle_x * PI_F / 180.f;
+    float angle_y = camera->angle_y * PI_F / 180.f;
+    float cos_x = cosf(angle_x);
+    float sin_x = sinf(angle_x);
+    float cos_y = cosf(angle_y);
+    float sin_y = sinf(angle_y);
+    float cx = (MAP_X - 1) * SPACE / 2.f;
+    float cy = (MAP_Y - 1) * SPACE / 2.f;
+    float center_x = WINDOW_SIZE_X / 2.f + camera->x;
+    float center_y = WINDOW_SIZE_Y / 2.f + camera->y;
+    float zoom = camera->zoom;
+    int z = 0;
+    int x = 0;
+    int y = 0;
+
     for (int i = 0; i < MAP_Y - 1; i++) {
         for (int j = 0; j < MAP_X - 1; j++) {
-            sfConvexShape_setPoint(tab[i][j], 0, project_iso_point(SPACE * (j + 1), SPACE * (i + 1), map_3d[i][j], camera));
-            sfConvexShape_setPoint(tab[i][j], 1, project_iso_point(SPACE * (j + 1), SPACE * i, map_3d[i][j], camera));
-            sfConvexShape_setPoint(tab[i][j], 2, project_iso_point(SPACE * j, SPACE * i, map_3d[i][j + 1], camera));
-            sfConvexShape_setPoint(tab[i][j], 3, project_iso_point(SPACE * j, SPACE * (i + 1), map_3d[i][j + 1], camera));
-            sfConvexShape_setFillColor(tab[i][j], change_color_by_z(map_3d[i][j]));
+            z = snap_height(map_3d[i][j]);
+            x = SPACE * j;
+            y = SPACE * i;
+            sfConvexShape_setPoint(tab[i][j], 0,
+                project_iso_fast((float)(x + SPACE), (float)(y + SPACE),
+                    (float)z, camera, cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            sfConvexShape_setPoint(tab[i][j], 1,
+                project_iso_fast((float)(x + SPACE), (float)y, (float)z,
+                    camera, cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            sfConvexShape_setPoint(tab[i][j], 2,
+                project_iso_fast((float)x, (float)y,
+                    (float)snap_height(map_3d[i][j + 1]), camera,
+                    cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            sfConvexShape_setPoint(tab[i][j], 3,
+                project_iso_fast((float)x, (float)(y + SPACE),
+                    (float)snap_height(map_3d[i][j + 1]), camera,
+                    cos_x, sin_x, cos_y, sin_y, cx, cy,
+                    center_x, center_y, zoom));
+            sfConvexShape_setFillColor(tab[i][j], change_color_by_z(z));
         }
     }
 }

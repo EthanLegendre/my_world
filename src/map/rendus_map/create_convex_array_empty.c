@@ -35,6 +35,19 @@ sfConvexShape ***create_convex_array_empty(void)
     for (int i = 0; i < MAP_Y - 1; i++) {
         for (int j = 0; j < MAP_X - 1; j++) {
             tab[i][j] = sfConvexShape_create();
+            if (!tab[i][j]) {
+                for (int y = 0; y <= i; y++) {
+                    for (int x = 0; x < MAP_X; x++) {
+                        if (tab[y][x])
+                            sfConvexShape_destroy(tab[y][x]);
+                    }
+                    free(tab[y]);
+                }
+                for (int y = i + 1; y < MAP_Y; y++)
+                    free(tab[y]);
+                free(tab);
+                return NULL;
+            }
             sfConvexShape_setPointCount(tab[i][j], 4);
             sfConvexShape_setOutlineColor(tab[i][j], sfBlack);
             sfConvexShape_setOutlineThickness(tab[i][j], 0.4);
