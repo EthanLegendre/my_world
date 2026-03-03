@@ -11,50 +11,82 @@
     #define PI_F 3.14159265358979323846f
 #endif
 
+typedef struct ip {
+    float angle_x;
+    float angle_y;
+    float cos_x;
+    float sin_x;
+    float cos_y;
+    float sin_y;
+    float cx;
+    float cy;
+    float center_x;
+    float center_y;
+    float zoom;
+    float x;
+    float y;
+    float rel_x;
+    float rel_y;
+    float z;
+    float screen_x;
+    float screen_y;
+} ip_t;
+
+ip_t *init_struct(camera_t *camera)
+{
+    ip_t *ip = malloc(sizeof(ip_t));
+
+    ip->angle_x = camera->angle_x * PI_F / 180.f;
+    ip->angle_y = camera->angle_y * PI_F / 180.f;
+    ip->cos_x = cosf(ip->angle_x);
+    ip->sin_x = sinf(ip->angle_x);
+    ip->cos_y = cosf(ip->angle_y);
+    ip->sin_y = sinf(ip->angle_y);
+    ip->cx = (MAP_X - 1) * SPACE / 2.f;
+    ip->cy = (MAP_Y - 1) * SPACE / 2.f;
+    ip->center_x = WINDOW_SIZE_X / 2.f + camera->x;
+    ip->center_y = WINDOW_SIZE_Y / 2.f + camera->y;
+    ip->zoom = camera->zoom;
+    ip->x = 0.0f;
+    ip->y = 0.0f;
+    ip->rel_x = 0.0f;
+    ip->rel_y = 0.0f;
+    ip->z = 0.0f;
+    ip->screen_x = 0.0f;
+    ip->screen_y = 0.0f;
+    return ip;
+} 
+
 void update_iso_point(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d, camera_t *camera)
 {
-    float angle_x = camera->angle_x * PI_F / 180.f;
-    float angle_y = camera->angle_y * PI_F / 180.f;
-    float cos_x = cosf(angle_x);
-    float sin_x = sinf(angle_x);
-    float cos_y = cosf(angle_y);
-    float sin_y = sinf(angle_y);
-    float cx = (MAP_X - 1) * SPACE / 2.f;
-    float cy = (MAP_Y - 1) * SPACE / 2.f;
-    float center_x = WINDOW_SIZE_X / 2.f + camera->x;
-    float center_y = WINDOW_SIZE_Y / 2.f + camera->y;
-    float zoom = camera->zoom;
-    float x = 0.0f;
-    float y = 0.0f;
-    float rel_x = 0.0f;
-    float rel_y = 0.0f;
-    float z = 0.0f;
-    float screen_x = 0.0f;
-    float screen_y = 0.0f;
+    ip_t *ip = init_struct(camera);
 
     for (int i = 0; i < MAP_Y; i++) {
-        y = (float)(SPACE * i);
+        ip->y = (float)(SPACE * i);
         for (int j = 0; j < MAP_X; j++) {
-            x = (float)(SPACE * j);
-            rel_x = x - cx;
-            rel_y = y - cy;
-            z = (float)map_3d[i][j];
-            screen_x = (cos_x * rel_x - sin_x * rel_y) * zoom + center_x;
-            screen_y = (cos_y * (sin_x * rel_x + cos_x * rel_y)
-                - sin_y * z) * zoom + center_y;
-            map_2d[i][j] = (sfVector2f){screen_x, screen_y};
+            ip->x = (float)(SPACE * j);
+            ip->rel_x = ip->x - ip->cx;
+            ip->rel_y = ip->y - ip->cy;
+            ip->z = (float)map_3d[i][j];
+            ip->screen_x = (ip->cos_x * ip->rel_x - ip->sin_x * ip->rel_y)
+                * ip->zoom + ip->center_x;
+            ip->screen_y = (ip->cos_y * (ip->sin_x * ip->rel_x +
+                ip->cos_x * ip->rel_y)
+                - ip->sin_y * ip->z) * ip->zoom + ip->center_y;
+            map_2d[i][j] = (sfVector2f){ip->screen_x, ip->screen_y};
         }
     }
+    free(ip);
 }
 
-void update_edit_map(int map_3d[MAP_Y][MAP_X], sfVector2i mouse_pos, camera_t *camera)
+void update_edit_map(int map_3d[MAP_Y][MAP_X], sfVector2i *mouse_pos, camera_t *camera)
 {
     sfVector2f current_point;
 
     for (int i = 0; i< MAP_Y; i++){
         for (int j = 0; j < MAP_X; j++){
             current_point = project_iso_point(SPACE * j, SPACE * i, map_3d[i][j], camera);
-            change_z_by_select_point(map_3d, mouse_pos, i, j, current_point);
+            //change_z_by_select_point(map_3d, mouse_pos, i, j, &current_point);
         }
     }
 }

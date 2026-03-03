@@ -15,14 +15,6 @@ static sfVector2f **mem_alloc_2d_array_sfVector(int nbr_line, int nbr_column)
         return NULL;
     for (int i = 0; i < nbr_line; i++)
             array[i] =  malloc(sizeof(sfVector2f) * nbr_column);
-    for (int i = 0; i < nbr_line; i++) {
-        if (!array[i]) {
-            for (int k = 0; k < i; k++)
-                free(array[k]);
-            free(array);
-            return NULL;
-        }
-    }
     return array;
 }
 

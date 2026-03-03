@@ -5,7 +5,7 @@
 ## my_radar
 ##
 
-CC = gcc
+CC = epiclang
 CFLAGS = -I include -I lib/csfml/includes
 
 SRC_LIB = lib/my/array/get_len_array_int.c \

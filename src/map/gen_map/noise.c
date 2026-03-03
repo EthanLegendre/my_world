@@ -35,18 +35,19 @@ static
 void init_permutation(int perm[512], unsigned int seed)
 {
     int values[256];
+    int j;
+    int tmp;
 
     for (int i = 0; i < 256; i++)
-        values[i] = i; //remplir tab
+        values[i] = i;
     for (int i = 255; i > 0; i--) {
-        seed = seed * 1664525u + 1013904223u; // mélanger tab
-        int j = (int)(seed % (unsigned int)(i + 1));
-        int tmp = values[i];
-
+        seed = seed * 1664525u + 1013904223u;
+        j = (int)(seed % (unsigned int)(i + 1));
+        tmp = values[i];
         values[i] = values[j];
         values[j] = tmp;
     }
-    for (int i = 0; i < 256; i++) { // block out of range
+    for (int i = 0; i < 256; i++) {
         perm[i] = values[i];
         perm[i + 256] = values[i];
     }
@@ -55,20 +56,20 @@ void init_permutation(int perm[512], unsigned int seed)
 static
 float perlin_2d(float x, float y, int perm[512])
 {
-    int xi = (int)floorf(x) & 255; // get block coordo
+    int xi = (int)floorf(x) & 255;
     int yi = (int)floorf(y) & 255;
-    float xf = x - floorf(x); // get local coordo
+    float xf = x - floorf(x);
     float yf = y - floorf(y);
-    float u = fade(xf); // smooth
+    float u = fade(xf);
     float v = fade(yf);
-    int aa = perm[perm[xi] + yi]; // get corner
+    int aa = perm[perm[xi] + yi];
     int ab = perm[perm[xi] + yi + 1];
     int ba = perm[perm[xi + 1] + yi];
     int bb = perm[perm[xi + 1] + yi + 1];
-    float x1 = midpoint(scalaire(aa, xf, yf), scalaire(ba, xf - 1.f, yf), u); // get scalaire && inter
-    float x2 = midpoint(scalaire(ab, xf, yf - 1.f), scalaire(bb, xf - 1.f, yf - 1.f), u);
-
-    return midpoint(x1, x2, v); // get height
+    float x1 = midpoint(scalaire(aa, xf, yf), scalaire(ba, xf - 1.f, yf), u);
+    float x2 = midpoint(scalaire(ab, xf, yf - 1.f),
+        scalaire(bb, xf - 1.f, yf - 1.f), u);
+    return midpoint(x1, x2, v);
 }
 
 static
@@ -82,11 +83,12 @@ int perlin_height_at(int x, int y, int perm[512])
     const float persistence = 0.5f;
     const float lacunarity = 2.f;
     const int octaves = 5;
+    float sample_x;
+    float sample_y;
 
     for (int octave = 0; octave < octaves; octave++) {
-        float sample_x = (float)x * base_scale * frequency;
-        float sample_y = (float)y * base_scale * frequency;
-
+        sample_x = (float)x * base_scale * frequency;
+        sample_y = (float)y * base_scale * frequency;
         total += perlin_2d(sample_x, sample_y, perm) * amplitude;
         max_value += amplitude;
         amplitude *= persistence;
@@ -94,10 +96,6 @@ int perlin_height_at(int x, int y, int perm[512])
     }
     total /= max_value;
     total = (total + 1.f) * 10.f;
-    // if (total < -10.f)
-    //     total = -10.f;
-    // if (total > 10.f)
-    //     total = 10.f;
     return (int)(total * MAX_HEIGHT_PERLIN);
 }
 

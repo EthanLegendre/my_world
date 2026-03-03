@@ -61,7 +61,7 @@ typedef struct sprite_info {
     sfColor color;
 }sprite_info_t;
 
-typedef struct camera_s{
+typedef struct camera_s {
     float x;
     float y;
     float angle_x;
@@ -69,7 +69,7 @@ typedef struct camera_s{
     float zoom;
 }camera_t;
 
-typedef struct game_info{
+typedef struct game_info {
     int strenght;
     int weight;
     int rayon;
@@ -97,20 +97,28 @@ void game_end(init_t *init);
 void manage_camera_pos(camera_t *camera);
 int **noise_perlin(int width, int height);
 sfColor change_color_by_z(int z);
-sfVector2f **create_2d_map_empty(int map_3d[MAP_Y][MAP_X], camera_t *camera);
-sfVertexArray *create_line_by_two_points(sfVector2f *point1 , sfVector2f *point2, int z);
-int draw_edit_map(sfRenderWindow *window, sfVector2f **map_2d, int map_3d[MAP_Y][MAP_X]);
-void manage_map(int map_3d[MAP_Y][MAP_X], sfVector2i mouse_pos, camera_t *camera);
-void change_z_by_select_point(int map_3d[MAP_Y][MAP_X], sfVector2i mouse_pos, int i, int j, sfVector2f current_point);
-sfVector2f project_iso_point(int x, int y, int z, camera_t *camera);
-void update_edit_map(int map_3d[MAP_Y][MAP_X], sfVector2i mouse_pos, camera_t *camera);
+sfVector2f **create_2d_map_empty(int map_3d[MAP_Y][MAP_X],
+    camera_t *camera);
+sfVertexArray *create_line_by_two_points(sfVector2f *point1,
+    sfVector2f *point2, int z);
+int draw_edit_map(sfRenderWindow *window, sfVector2f **map_2d,
+    int map_3d[MAP_Y][MAP_X]);
+sfVector2f project_iso_point(int x, int y, int z,
+    camera_t *camera);
+void update_edit_map(int map_3d[MAP_Y][MAP_X],
+    sfVector2i *mouse_pos, camera_t *camera);
 sfConvexShape ***mem_alloc_2d_array_sfVConvex(int nbr_line, int nbr_column);
 int draw_rendus_map(sfRenderWindow *window, sfConvexShape ***convex_tab);
-void fit_convex_by_map(sfConvexShape ***tab, int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info);
+void fit_convex_by_map(sfConvexShape ***tab, int map_3d[MAP_Y][MAP_X],
+    camera_t *camera, game_info_t *game_info);
 sfConvexShape ***create_convex_array_empty(void);
-void manage_edit_mode(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d, camera_t *camera, game_info_t *game_info);
-void manage_rendus_mode(sfConvexShape ***convex_tab1, int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info);
-void update_iso_point(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d, camera_t *camera);
-void fit_convex_by_map2(sfConvexShape ***tab, int map_3d[MAP_Y][MAP_X], camera_t *camera);
+void manage_edit_mode(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d,
+    camera_t *camera, game_info_t *game_info);
+void manage_rendus_mode(sfConvexShape ***convex_tab1,
+    int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info);
+void update_iso_point(int map_3d[MAP_Y][MAP_X],
+    sfVector2f **map_2d, camera_t *camera);
+void fit_convex_by_map2(sfConvexShape ***tab,
+    int map_3d[MAP_Y][MAP_X], camera_t *camera);
 
 #endif /* !MY_WORLD */
