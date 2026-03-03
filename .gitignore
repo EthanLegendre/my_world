@@ -3,3 +3,4 @@ bootstrap_my_world (1).pdf
 my_world
 src/*/*/*.o
 src/*/*.o
+lib/libmy.a
