@@ -30,6 +30,28 @@
     #define HAUTEUR_MAX 200
     #define HAUTEUR_MIN 0
     #define MAX_HEIGHT_PERLIN 255
+    #define PI_F 3.14159265358979323846f
+
+typedef struct ip {
+    float angle_x;
+    float angle_y;
+    float cos_x;
+    float sin_x;
+    float cos_y;
+    float sin_y;
+    float cx;
+    float cy;
+    float center_x;
+    float center_y;
+    float zoom;
+    float x;
+    float y;
+    float rel_x;
+    float rel_y;
+    float z;
+    float screen_x;
+    float screen_y;
+} ip_t;
 
 typedef struct init {
     csfml_context_t *ctx;
@@ -69,6 +91,23 @@ typedef struct camera_s {
     float zoom;
 }camera_t;
 
+typedef struct fcbm {
+    float angle_x;
+    float angle_y;
+    float cos_x;
+    float sin_x;
+    float cos_y;
+    float sin_y;
+    float cx;
+    float cy;
+    float center_x;
+    float center_y;
+    float zoom;
+    int z;
+    int x;
+    int y;
+} fcbm_t;
+
 typedef struct game_info {
     int strenght;
     int weight;
@@ -78,7 +117,21 @@ typedef struct game_info {
     sfTexture *snow_texture;
     sfTexture *herbe_texture;
     sfTexture *sand_texture;
+    sfVector2i mouse_pos;
 }game_info_t;
+
+typedef struct pha {
+    float amplitude;
+    float frequency;
+    float total;
+    float max_value;
+    float base_scale;
+    float persistence;
+    float lacunarity;
+    int octaves;
+    float sample_x;
+    float sample_y;
+}pha_t;
 
 typedef struct world_runtime_s {
     init_t *init;
@@ -106,7 +159,7 @@ int draw_edit_map(sfRenderWindow *window, sfVector2f **map_2d,
 sfVector2f project_iso_point(int x, int y, int z,
     camera_t *camera);
 void update_edit_map(int map_3d[MAP_Y][MAP_X],
-    sfVector2i *mouse_pos, camera_t *camera);
+    game_info_t *game_info, camera_t *camera);
 sfConvexShape ***mem_alloc_2d_array_sfVConvex(int nbr_line, int nbr_column);
 int draw_rendus_map(sfRenderWindow *window, sfConvexShape ***convex_tab);
 void fit_convex_by_map(sfConvexShape ***tab, int map_3d[MAP_Y][MAP_X],
@@ -118,7 +171,6 @@ void manage_rendus_mode(sfConvexShape ***convex_tab1,
     int map_3d[MAP_Y][MAP_X], camera_t *camera, game_info_t *game_info);
 void update_iso_point(int map_3d[MAP_Y][MAP_X],
     sfVector2f **map_2d, camera_t *camera);
-void fit_convex_by_map2(sfConvexShape ***tab,
-    int map_3d[MAP_Y][MAP_X], camera_t *camera);
-
+void change_z_by_select_point(int map_3d[MAP_Y][MAP_X],
+    sfVector2i *mouse_pos, int *int_tab, sfVector2f *current_point);
 #endif /* !MY_WORLD */

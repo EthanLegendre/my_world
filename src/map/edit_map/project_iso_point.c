@@ -8,10 +8,6 @@
 #include "../../../include/my_world.h"
 #include <math.h>
 
-#ifndef PI_F
-    #define PI_F 3.14159265358979323846f
-#endif
-
 static
 float deg_to_rad(float deg)
 {

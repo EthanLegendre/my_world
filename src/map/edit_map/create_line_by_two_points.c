@@ -7,7 +7,8 @@
 
 #include "../../../include/my_world.h"
 
-sfVertexArray *create_line_by_two_points(sfVector2f *point1 , sfVector2f *point2, int z)
+sfVertexArray *create_line_by_two_points(sfVector2f *point1,
+    sfVector2f *point2, int z)
 {
     int ht_max = HAUTEUR_MAX;
     sfVertexArray *vertex_array = sfVertexArray_create();
@@ -15,8 +16,8 @@ sfVertexArray *create_line_by_two_points(sfVector2f *point1 , sfVector2f *point2
     sfVertex vertex1 = {.position = *point1, .color = color};
     sfVertex vertex2 = {.position = *point2, .color = color};
 
-    sfVertexArray_append(vertex_array , vertex1);
-    sfVertexArray_append(vertex_array , vertex2);
-    sfVertexArray_setPrimitiveType(vertex_array , sfLinesStrip);
+    sfVertexArray_append(vertex_array, vertex1);
+    sfVertexArray_append(vertex_array, vertex2);
+    sfVertexArray_setPrimitiveType(vertex_array, sfLinesStrip);
     return vertex_array;
 }

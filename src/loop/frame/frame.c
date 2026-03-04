@@ -13,6 +13,8 @@ void loop_on_frame(csfml_context_t *ctx, float dt, void *user_data)
 
     (void)ctx;
     (void)dt;
+    runtime->game_info->mouse_pos =
+        sfMouse_getPositionRenderWindow(runtime->init->window);
     if (!runtime)
         return;
     if (runtime->game_info->edit_mode) {
