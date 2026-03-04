@@ -13,5 +13,6 @@
 void loop_on_key_pressed(sfKeyCode key, void *user_data);
 void loop_on_frame(csfml_context_t *ctx, float dt, void *user_data);
 void loop_on_draw(csfml_context_t *ctx, void *user_data);
+void loop_register_input_callbacks(world_runtime_t *runtime);
 
 #endif /* LOOP_INTERNAL_H */

@@ -15,7 +15,9 @@ void loop_on_draw(csfml_context_t *ctx, void *user_data)
         return;
     if (runtime->game_info->edit_mode) {
         draw_edit_map(ctx->window, runtime->map_2d, runtime->map_3d);
-        return;
+    } else {
+        draw_rendus_map(ctx->window, runtime->rendus_map);
     }
-    draw_rendus_map(ctx->window, runtime->rendus_map);
+    if (runtime->init && runtime->init->menu)
+        csfml_menu_draw(ctx->window, runtime->init->menu, NULL);
 }

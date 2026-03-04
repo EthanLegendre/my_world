@@ -72,28 +72,60 @@ SRC = src/init/init.c \
 	src/map/rendus_map/create_convex_array_empty.c \
 	src/map/rendus_map/draw_rendus_map.c \
 	src/map/rendus_map/fit_convex_by_map.c \
-	src/map/rendus_map/manage_rendus_mode.c
-
+	src/map/rendus_map/manage_rendus_mode.c \
+	src/menu/home/home_menu.c \
+	src/menu/home/init.c \
+	src/menu/home/init/button.c \
+	src/menu/home/init/background.c \
+	src/menu/home/init/button/load.c \
+	src/menu/home/init/button/exit.c \
+	src/menu/home/init/button/random.c \
+	src/menu/load/init.c \
+	src/menu/menu.c \
+	src/menu/pause/init.c
+	
 SRC_CSFML = \
-	lib/csfml/src/init_project/window/init_window.c \
-	lib/csfml/src/init_project/setup.c \
-	lib/csfml/src/init_project/dispatch.c \
-	lib/csfml/src/init_project/context/create_destroy.c \
-	lib/csfml/src/init_project/context/background.c \
-	lib/csfml/src/init_project/context/setters.c \
-	lib/csfml/src/init_project/context/context_setters_extra.c \
-	lib/csfml/src/init_project/context/events.c \
-	lib/csfml/src/init_project/context/frame.c \
-	lib/csfml/src/init_project/context/run.c \
-	lib/csfml/src/textures/simple_textures.c \
-	lib/csfml/src/sound/parts/internal.c \
-	lib/csfml/src/sound/parts/get.c \
-	lib/csfml/src/sound/parts/load.c \
-	lib/csfml/src/sound/parts/play.c \
-	lib/csfml/src/sound/parts/stop.c \
-	lib/csfml/src/sound/parts/unload.c \
-	lib/csfml/src/sound/parts/cleanup.c \
-	lib/csfml/src/sound/parts/set_all_volume.c
+		lib/csfml/src/init_project/window/init_window.c \
+    	lib/csfml/src/init_project/setup.c \
+    	lib/csfml/src/init_project/dispatch.c \
+    	lib/csfml/src/init_project/context/create_destroy.c \
+    	lib/csfml/src/init_project/context/background.c \
+    	lib/csfml/src/init_project/context/setters.c \
+    	lib/csfml/src/init_project/context/context_setters_extra.c \
+    	lib/csfml/src/init_project/context/events.c \
+    	lib/csfml/src/init_project/context/frame.c \
+    	lib/csfml/src/init_project/context/run.c \
+    	lib/csfml/src/textures/simple_textures.c \
+    	lib/csfml/src/buttons/button_create.c \
+    	lib/csfml/src/buttons/button_draw.c \
+    	lib/csfml/src/buttons/button_event.c \
+    	lib/csfml/src/buttons/button_setters.c \
+    	lib/csfml/src/buttons/button_setters_extra.c \
+    	lib/csfml/src/selector/selector.c \
+    	lib/csfml/src/selector/selector_label.c \
+    	lib/csfml/src/selector/selector_accessors.c \
+    	lib/csfml/src/selector/selector_onchange.c \
+    	lib/csfml/src/selector/selector_init.c \
+    	lib/csfml/src/selector/selector_wrappers.c \
+    	lib/csfml/src/selector/selector_helpers.c \
+    	lib/csfml/src/menus/menu_core.c \
+    	lib/csfml/src/menus/menu_state.c \
+    	lib/csfml/src/menus/menu_pages.c \
+    	lib/csfml/src/menus/menu_texts.c \
+    	lib/csfml/src/menus/menu_background.c \
+    	lib/csfml/src/menus/menu_draw.c \
+    	lib/csfml/src/buttons/button_utils.c \
+    	lib/csfml/src/sprite/sprite.c \
+    	lib/csfml/src/textures/delete/delete.c \
+    	lib/csfml/src/sound/parts/internal.c \
+    	lib/csfml/src/sound/parts/get.c \
+    	lib/csfml/src/sound/parts/load.c \
+    	lib/csfml/src/sound/parts/play.c \
+    	lib/csfml/src/sound/parts/stop.c \
+    	lib/csfml/src/sound/parts/unload.c \
+    	lib/csfml/src/sound/parts/cleanup.c \
+    	lib/csfml/src/sound/parts/set_all_volume.c \
+    	lib/csfml/src/anims/anim.c
 
 SRC += $(SRC_CSFML)
 

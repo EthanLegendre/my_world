@@ -5,8 +5,11 @@
 ** game_loop
 */
 
+#include <stdlib.h>
+
 #include "my_world.h"
 #include "loop_internal.h"
+#include "textures_simple.h"
 
 static
 void free_map_2d(sfVector2f **map_2d)
@@ -24,10 +27,13 @@ void free_convex_array(sfConvexShape ***tab)
     if (!tab)
         return;
     for (int i = 0; i < MAP_Y; i++) {
-        for (int j = 0; j < MAP_X; j++) {
-            sfConvexShape_destroy(tab[i][j]);
+        if (tab[i]) {
+            for (int j = 0; j < MAP_X; j++) {
+                if (tab[i][j])
+                    sfConvexShape_destroy(tab[i][j]);
+            }
+            free(tab[i]);
         }
-        free(tab[i]);
     }
     free(tab);
 }
@@ -53,33 +59,11 @@ void load_world_textures(init_t *init, game_info_t *game_info)
     game_info->water_texture = csfml_tex_load(init->ctx,
         "world_water", "assets/water.png");
     game_info->herbe_texture = csfml_tex_load(init->ctx,
-        "world_grass",
-        "assets/isometric tileset/separated images/tile_027.png");
+        "world_grass", "assets/isometric tileset/separated images/tile_027.png");
     game_info->snow_texture = csfml_tex_load(init->ctx,
         "world_rock", "assets/rock3.png");
     game_info->sand_texture = csfml_tex_load(init->ctx,
         "world_sand", "assets/image.png");
-}
-
-void manage_noise(int **noise, world_runtime_t *runtime)
-{
-    for (int i = 0; i < MAP_Y; i++) {
-        for (int j = 0; j < MAP_X; j++)
-            runtime->map_3d[i][j] = (noise[i][j] * HAUTEUR_MAX) / 255;
-        free(noise[i]);
-    }
-    free(noise);
-}
-
-void manage_runtime(int **noise, world_runtime_t *runtime)
-{
-    if (!runtime->rendus_map || !runtime->map_2d) {
-        free_runtime_resources(runtime);
-        for (int i = 0; i < MAP_Y; i++)
-            free(noise[i]);
-        free(noise);
-        return;
-    }
 }
 
 void game_loop(init_t *init, camera_t *camera, game_info_t *game_info)
@@ -95,9 +79,24 @@ void game_loop(init_t *init, camera_t *camera, game_info_t *game_info)
     runtime.rendus_map = create_convex_array_empty();
     runtime.rendus_map2 = NULL;
     runtime.map_2d = create_2d_map_empty(runtime.map_3d, camera);
-    manage_runtime(noise, &runtime);
+    if (!runtime.rendus_map || !runtime.map_2d) {
+        free_runtime_resources(&runtime);
+        if (noise) {
+            for (int i = 0; i < MAP_Y; i++)
+                free(noise[i]);
+            free(noise);
+        }
+        return;
+    }
     load_world_textures(init, game_info);
-    manage_noise(noise, &runtime);
+    if (noise) {
+        for (int i = 0; i < MAP_Y; i++) {
+            for (int j = 0; j < MAP_X; j++)
+                runtime.map_3d[i][j] = (noise[i][j] * HAUTEUR_MAX) / 255;
+            free(noise[i]);
+        }
+        free(noise);
+    }
     update_iso_point(runtime.map_3d, runtime.map_2d, runtime.camera);
     csfml_context_set_key_press_cb(init->ctx, loop_on_key_pressed);
     csfml_context_run(init->ctx, loop_on_frame, loop_on_draw, &runtime);

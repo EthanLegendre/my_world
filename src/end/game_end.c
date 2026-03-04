@@ -7,11 +7,15 @@
 
 #include "my_world.h"
 
-void game_end(init_t *initialisation)
+void game_end(my_world_t *world_data)
 {
-    if (!initialisation || !initialisation->ctx)
+    if (!world_data)
         return;
-    csfml_context_close(initialisation->ctx);
-    initialisation->ctx = NULL;
-    initialisation->window = NULL;
+    if (world_data->menu)
+        csfml_menu_destroy(world_data->menu);
+    if (world_data->font_menu)
+        sfFont_destroy(world_data->font_menu);
+    if (world_data->ctx)
+        csfml_context_close(world_data->ctx);
+    free(world_data);
 }
