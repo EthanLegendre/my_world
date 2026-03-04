@@ -93,21 +93,17 @@ int perlin_height_at(int x, int y, int perm[512])
     }
     total /= max_value;
     total = (total + 1.f) * 10.f;
-    // if (total < -10.f)
-    //     total = -10.f;
-    // if (total > 10.f)
-    //     total = 10.f;
     return (int)(total * MAX_HEIGHT_PERLIN);
 }
 
-int **noise_perlin(int width, int height)
+int **noise_perlin(int width, int height, unsigned int seed)
 {
     int **noise = malloc(sizeof(int *) * height);
     int perm[512];
 
     if (!noise)
         return NULL;
-    init_permutation(perm, 986u);
+    init_permutation(perm, seed);
     for (int i = 0; i < height; i++) {
         noise[i] = malloc(sizeof(int) * width);
         if (!noise[i]) {
@@ -121,4 +117,19 @@ int **noise_perlin(int width, int height)
         }
     }
     return noise;
+}
+
+int fill_map_with_perlin(int map_3d[MAP_Y][MAP_X], unsigned int seed)
+{
+    int **noise = noise_perlin(MAP_X, MAP_Y, seed);
+
+    if (!noise)
+        return -1;
+    for (int i = 0; i < MAP_Y; i++) {
+        for (int j = 0; j < MAP_X; j++)
+            map_3d[i][j] = (noise[i][j] * HAUTEUR_MAX) / 255;
+        free(noise[i]);
+    }
+    free(noise);
+    return 0;
 }

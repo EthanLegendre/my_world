@@ -52,28 +52,27 @@ void free_runtime_resources(world_runtime_t *runtime)
 }
 
 static
-void load_world_textures(init_t *init, game_info_t *game_info)
+void load_world_textures(my_world_t *world_data, game_info_t *game_info)
 {
-    if (!init || !init->ctx || !game_info)
+    if (!world_data || !world_data->ctx || !game_info)
         return;
-    game_info->water_texture = csfml_tex_load(init->ctx,
+    game_info->water_texture = csfml_tex_load(world_data->ctx,
         "world_water", "assets/water.png");
-    game_info->herbe_texture = csfml_tex_load(init->ctx,
+    game_info->herbe_texture = csfml_tex_load(world_data->ctx,
         "world_grass", "assets/isometric tileset/separated images/tile_027.png");
-    game_info->snow_texture = csfml_tex_load(init->ctx,
+    game_info->snow_texture = csfml_tex_load(world_data->ctx,
         "world_rock", "assets/rock3.png");
-    game_info->sand_texture = csfml_tex_load(init->ctx,
+    game_info->sand_texture = csfml_tex_load(world_data->ctx,
         "world_sand", "assets/image.png");
 }
 
-void game_loop(init_t *init, camera_t *camera, game_info_t *game_info)
+void game_loop(my_world_t *world_data, camera_t *camera, game_info_t *game_info)
 {
     world_runtime_t runtime = {0};
-    int **noise = noise_perlin(MAP_X, MAP_Y);
 
-    if (!init || !init->ctx || !init->window)
+    if (!world_data->ctx || !world_data->ctx->window)
         return;
-    runtime.init = init;
+    runtime.init = world_data;
     runtime.camera = camera;
     runtime.game_info = game_info;
     runtime.rendus_map = create_convex_array_empty();
@@ -81,24 +80,15 @@ void game_loop(init_t *init, camera_t *camera, game_info_t *game_info)
     runtime.map_2d = create_2d_map_empty(runtime.map_3d, camera);
     if (!runtime.rendus_map || !runtime.map_2d) {
         free_runtime_resources(&runtime);
-        if (noise) {
-            for (int i = 0; i < MAP_Y; i++)
-                free(noise[i]);
-            free(noise);
-        }
         return;
     }
-    load_world_textures(init, game_info);
-    if (noise) {
-        for (int i = 0; i < MAP_Y; i++) {
-            for (int j = 0; j < MAP_X; j++)
-                runtime.map_3d[i][j] = (noise[i][j] * HAUTEUR_MAX) / 255;
-            free(noise[i]);
-        }
-        free(noise);
+    if (fill_map_with_perlin(runtime.map_3d, world_data->map_seed) != 0) {
+        free_runtime_resources(&runtime);
+        return;
     }
+    load_world_textures(world_data, game_info);
     update_iso_point(runtime.map_3d, runtime.map_2d, runtime.camera);
-    csfml_context_set_key_press_cb(init->ctx, loop_on_key_pressed);
-    csfml_context_run(init->ctx, loop_on_frame, loop_on_draw, &runtime);
+    loop_register_input_callbacks(&runtime);
+    csfml_context_run(world_data->ctx, loop_on_frame, loop_on_draw, &runtime);
     free_runtime_resources(&runtime);
 }

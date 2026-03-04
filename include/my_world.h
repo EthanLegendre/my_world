@@ -29,11 +29,6 @@
     #define HAUTEUR_MIN 0
     #define MAX_HEIGHT_PERLIN 255
 
-typedef struct init {
-    csfml_context_t *ctx;
-    sfRenderWindow *window;
-}init_t;
-
 typedef struct text_info {
     sfText *text;
     sfFont *font;
@@ -78,8 +73,22 @@ typedef struct game_info{
     sfTexture *sand_texture;
 }game_info_t;
 
+typedef struct my_world_s {
+    csfml_context_t *ctx;
+    csfml_menu_t *menu;
+    sfTexture *tex_menu;
+    sfFont *font_menu;
+    unsigned int map_seed;
+    int map_seed_dirty;
+    int menu_open;
+    int main_page_id;
+    int edit_page_id;
+    int load_page_id;
+    int pause_page_id;
+} my_world_t;
+
 typedef struct world_runtime_s {
-    world_ *init;
+    my_world_t *init;
     camera_t *camera;
     game_info_t *game_info;
     int map_3d[MAP_Y][MAP_X];
@@ -89,11 +98,12 @@ typedef struct world_runtime_s {
     int rendus_dirty;
 } world_runtime_t;
 
-init_t init(void);
-void game_loop(init_t *init, camera_t *camera, game_info_t *game_info);
-void game_end(init_t *init);
+my_world_t *init(void);
+void game_loop(my_world_t *world_data, camera_t *camera, game_info_t *game_info);
+void game_end(my_world_t *world_data);
 void manage_camera_pos(camera_t *camera);
-int **noise_perlin(int width, int height);
+int **noise_perlin(int width, int height, unsigned int seed);
+int fill_map_with_perlin(int map_3d[MAP_Y][MAP_X], unsigned int seed);
 sfColor change_color_by_z(int z);
 sfVector2f **create_2d_map_empty(int map_3d[MAP_Y][MAP_X], camera_t *camera);
 sfVertexArray *create_line_by_two_points(sfVector2f *point1 , sfVector2f *point2, int z);
