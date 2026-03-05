@@ -81,9 +81,11 @@ SRC = src/init/init.c \
 	src/menu/home/init/button/exit.c \
 	src/menu/home/init/button/random.c \
 	src/menu/load/init.c \
+	src/menu/load/save_legend.c \
+	src/menu/save/init.c \
 	src/menu/menu.c \
 	src/menu/pause/init.c
-	
+
 SRC_CSFML = \
 		lib/csfml/src/init_project/window/init_window.c \
     	lib/csfml/src/init_project/setup.c \

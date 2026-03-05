@@ -15,7 +15,8 @@ void loop_on_frame(__attribute__((unused)) csfml_context_t *ctx,
     if (!runtime)
         return;
     if (runtime->init && runtime->init->map_seed_dirty) {
-        if (fill_map_with_perlin(runtime->map_3d, runtime->init->map_seed) == 0) {
+        if (fill_map_with_perlin(runtime->map_3d,
+                runtime->init->map_seed) == 0) {
             update_iso_point(runtime->map_3d, runtime->map_2d, runtime->camera);
             runtime->rendus_dirty = 1;
         }

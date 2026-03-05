@@ -59,7 +59,8 @@ void load_world_textures(my_world_t *world_data, game_info_t *game_info)
     game_info->water_texture = csfml_tex_load(world_data->ctx,
         "world_water", "assets/water.png");
     game_info->herbe_texture = csfml_tex_load(world_data->ctx,
-        "world_grass", "assets/isometric tileset/separated images/tile_027.png");
+        "world_grass",
+        "assets/isometric tileset/separated images/tile_027.png");
     game_info->snow_texture = csfml_tex_load(world_data->ctx,
         "world_rock", "assets/rock3.png");
     game_info->sand_texture = csfml_tex_load(world_data->ctx,
@@ -87,8 +88,16 @@ void game_loop(my_world_t *world_data, camera_t *camera, game_info_t *game_info)
         return;
     }
     load_world_textures(world_data, game_info);
+    world_data->active_camera = runtime.camera;
+    world_data->active_map_2d = runtime.map_2d;
+    world_data->active_rendus_dirty = &runtime.rendus_dirty;
+    world_data->active_map_3d = runtime.map_3d;
     update_iso_point(runtime.map_3d, runtime.map_2d, runtime.camera);
     loop_register_input_callbacks(&runtime);
     csfml_context_run(world_data->ctx, loop_on_frame, loop_on_draw, &runtime);
+    world_data->active_camera = NULL;
+    world_data->active_map_2d = NULL;
+    world_data->active_rendus_dirty = NULL;
+    world_data->active_map_3d = NULL;
     free_runtime_resources(&runtime);
 }

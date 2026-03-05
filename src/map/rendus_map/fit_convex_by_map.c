@@ -7,10 +7,6 @@
 
 #include "../../../include/my_world.h"
 
-#ifndef PI_F
-    #define PI_F 3.14159265358979323846f
-#endif
-
 static
 int snap_height(int z)
 {

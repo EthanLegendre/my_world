@@ -5,7 +5,8 @@
 ** game_loop
 */
 
-#include "my_world.h"
+#include "../../../include/my_world.h"
+
 
 // polynomiale
 static
@@ -34,18 +35,19 @@ static
 void init_permutation(int perm[512], unsigned int seed)
 {
     int values[256];
+    int j;
+    int tmp;
 
     for (int i = 0; i < 256; i++)
-        values[i] = i; //remplir tab
+        values[i] = i;
     for (int i = 255; i > 0; i--) {
-        seed = seed * 1664525u + 1013904223u; // mélanger tab
-        int j = (int)(seed % (unsigned int)(i + 1));
-        int tmp = values[i];
-
+        seed = seed * 1664525u + 1013904223u;
+        j = (int)(seed % (unsigned int)(i + 1));
+        tmp = values[i];
         values[i] = values[j];
         values[j] = tmp;
     }
-    for (int i = 0; i < 256; i++) { // block out of range
+    for (int i = 0; i < 256; i++) {
         perm[i] = values[i];
         perm[i + 256] = values[i];
     }
@@ -54,46 +56,59 @@ void init_permutation(int perm[512], unsigned int seed)
 static
 float perlin_2d(float x, float y, int perm[512])
 {
-    int xi = (int)floorf(x) & 255; // get block coordo
+    int xi = (int)floorf(x) & 255;
     int yi = (int)floorf(y) & 255;
-    float xf = x - floorf(x); // get local coordo
+    float xf = x - floorf(x);
     float yf = y - floorf(y);
-    float u = fade(xf); // smooth
+    float u = fade(xf);
     float v = fade(yf);
-    int aa = perm[perm[xi] + yi]; // get corner
+    int aa = perm[perm[xi] + yi];
     int ab = perm[perm[xi] + yi + 1];
     int ba = perm[perm[xi + 1] + yi];
     int bb = perm[perm[xi + 1] + yi + 1];
-    float x1 = midpoint(scalaire(aa, xf, yf), scalaire(ba, xf - 1.f, yf), u); // get scalaire && inter
-    float x2 = midpoint(scalaire(ab, xf, yf - 1.f), scalaire(bb, xf - 1.f, yf - 1.f), u);
+    float x1 = midpoint(scalaire(aa, xf, yf), scalaire(ba, xf - 1.f, yf), u);
+    float x2 = midpoint(scalaire(ab, xf, yf - 1.f),
+        scalaire(bb, xf - 1.f, yf - 1.f), u);
 
-    return midpoint(x1, x2, v); // get height
+    return midpoint(x1, x2, v);
+}
+
+void init_pha(pha_t *pha)
+{
+    pha->amplitude = 1.f;
+    pha->frequency = 1.f;
+    pha->total = 0.f;
+    pha->max_value = 0.f;
+    pha->base_scale = 0.01f;
+    pha->persistence = 0.5f;
+    pha->lacunarity = 2.f;
+    pha->octaves = 5;
 }
 
 static
 int perlin_height_at(int x, int y, int perm[512])
 {
-    float amplitude = 1.f;
-    float frequency = 1.f;
-    float total = 0.f;
-    float max_value = 0.f;
-    const float base_scale = 0.01f;
-    const float persistence = 0.5f;
-    const float lacunarity = 2.f;
-    const int octaves = 5;
+    pha_t pha;
 
-    for (int octave = 0; octave < octaves; octave++) {
-        float sample_x = (float)x * base_scale * frequency;
-        float sample_y = (float)y * base_scale * frequency;
-
-        total += perlin_2d(sample_x, sample_y, perm) * amplitude;
-        max_value += amplitude;
-        amplitude *= persistence;
-        frequency *= lacunarity;
+    init_pha(&pha);
+    for (int octave = 0; octave < pha.octaves; octave++) {
+        pha.sample_x = (float)x * pha.base_scale * pha.frequency;
+        pha.sample_y = (float)y * pha.base_scale * pha.frequency;
+        pha.total += perlin_2d(pha.sample_x, pha.sample_y, perm)
+            * pha.amplitude;
+        pha.max_value += pha.amplitude;
+        pha.amplitude *= pha.persistence;
+        pha.frequency *= pha.lacunarity;
     }
-    total /= max_value;
-    total = (total + 1.f) * 10.f;
-    return (int)(total * MAX_HEIGHT_PERLIN);
+    pha.total /= pha.max_value;
+    pha.total = (pha.total + 1.f) * 10.f;
+    return (int)(pha.total * MAX_HEIGHT_PERLIN);
+}
+
+void free_noise(int **noise, int i)
+{
+    for (int k = 0; k < i; k++)
+        free(noise[k]);
 }
 
 int **noise_perlin(int width, int height, unsigned int seed)
@@ -107,8 +122,7 @@ int **noise_perlin(int width, int height, unsigned int seed)
     for (int i = 0; i < height; i++) {
         noise[i] = malloc(sizeof(int) * width);
         if (!noise[i]) {
-            for (int k = 0; k < i; k++)
-                free(noise[k]);
+            free_noise(noise, i);
             free(noise);
             return NULL;
         }

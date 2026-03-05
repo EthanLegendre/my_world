@@ -19,7 +19,6 @@ int main(int argc, char **argv)
 
     if (!initialisation->ctx || !initialisation->ctx->window)
         return 84;
-    // init mene
     init_menu(initialisation);
     game_loop(initialisation, &camera, &game_info);
     game_end(initialisation);

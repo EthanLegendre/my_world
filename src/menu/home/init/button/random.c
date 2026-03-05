@@ -7,13 +7,12 @@
 
 #include "menu/home.h"
 
+// TODO: Background musique launch
 static
 void random_btn_cb(void *user_data)
 {
     my_world_t *world_data = user_data;
 
-
-    // TODO: Background musique launch
     if (!world_data || !world_data->menu)
         return;
     world_data->map_seed = (unsigned int)rand();

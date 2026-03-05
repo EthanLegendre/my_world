@@ -33,7 +33,7 @@ void main_menu_scale_and_center(
     sfSprite_setPosition(bg, (sfVector2f){x, y});
 }
 
-sfTexture *load_background(csfml_menu_t *menu, int main_page_id,
+void load_background(csfml_menu_t *menu, int main_page_id,
     sfTexture *tex_menu, const csfml_context_t *ctx)
 {
     sfIntRect panel_rect = { .left = 485, .top = 20,

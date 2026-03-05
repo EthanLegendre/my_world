@@ -31,6 +31,7 @@ void save_1_btn_cb(void *user_data)
 
     if (!world_data || !world_data->menu)
         return;
+    load_map_from_legend(world_data, 1);
     csfml_menu_close(world_data->menu);
 }
 
@@ -41,6 +42,7 @@ void save_2_btn_cb(void *user_data)
 
     if (!world_data || !world_data->menu)
         return;
+    load_map_from_legend(world_data, 2);
     csfml_menu_close(world_data->menu);
 }
 
@@ -98,7 +100,7 @@ void init_menu_load(my_world_t *world_data)
         return;
     load_background(world_data->menu, world_data->load_page_id,
         world_data->tex_menu, world_data->ctx);
-    create_load_button(world_data, "Save 1", save_1_btn_cb, 360.0f);
-    create_load_button(world_data, "Save 2", save_2_btn_cb, 480.0f);
+    create_load_button(world_data, "Load 1", save_1_btn_cb, 360.0f);
+    create_load_button(world_data, "Load 2", save_2_btn_cb, 480.0f);
     create_load_button(world_data, "Back", back_btn_cb, 600.0f);
 }

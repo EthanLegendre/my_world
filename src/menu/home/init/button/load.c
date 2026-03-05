@@ -17,8 +17,8 @@ void load_btn_cb(void *user_data)
 
     if (!world_data || !world_data->menu)
         return;
+    world_data->save_menu_from_page_id = world_data->main_page_id;
     load_page_id = world_data->load_page_id;
-    printf("load_page_id %d\n", load_page_id);
     if (load_page_id >= 0)
         csfml_menu_set_active_page(world_data->menu, load_page_id);
     csfml_menu_open(world_data->menu);

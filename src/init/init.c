@@ -40,6 +40,12 @@ static my_world_t *init_word_data(csfml_context_t *ctx)
     world_data->edit_page_id = -1;
     world_data->menu_open = 0;
     world_data->pause_page_id = -1;
+    world_data->save_page_id = -1;
+    world_data->save_menu_from_page_id = -1;
+    world_data->active_camera = NULL;
+    world_data->active_map_2d = NULL;
+    world_data->active_rendus_dirty = NULL;
+    world_data->active_map_3d = NULL;
     return world_data;
 }
 

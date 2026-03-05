@@ -72,8 +72,8 @@ void loop_on_key_pressed(sfKeyCode key, void *user_data)
             runtime->rendus_dirty = 1;
     }
     if (key == sfKeyEscape) {
-        csfml_menu_set_active_page(runtime->init->menu, runtime->init->pause_page_id);
+        csfml_menu_set_active_page(runtime->init->menu,
+            runtime->init->pause_page_id);
         csfml_menu_open(runtime->init->menu);
     }
-    // sfRenderWindow_close(runtime->init->ctx->window);
 }

@@ -19,7 +19,8 @@
 void init_menu(my_world_t *world_data);
 void init_menu_home(my_world_t *world_data);
 void init_menu_load(my_world_t *world_data);
-sfTexture *load_background(csfml_menu_t *menu, int main_page_id,
+void init_menu_save(my_world_t *world_data);
+void load_background(csfml_menu_t *menu, int main_page_id,
     sfTexture *tex_menu, const csfml_context_t *ctx);
 csfml_button_t *init_button_random(my_world_t *world_data, sfTexture *menu_tex,
     sfFont *font, const sfRenderWindow *window);
@@ -32,4 +33,7 @@ bool main_menu_init_buttons(my_world_t *world_data, sfTexture *menu_tex,
     sfFont *font, const sfRenderWindow *window);
 void apply_menu_button_sounds(my_world_t *world_data, csfml_button_t *button);
 void init_menu_pause(my_world_t *world_data);
+int save_map_to_legend(my_world_t *world_data, int slot);
+int load_map_from_legend(my_world_t *world_data, int slot);
+
 #endif //MY_WORLD_HOME_H

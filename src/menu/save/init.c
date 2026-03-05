@@ -2,18 +2,18 @@
 ** EPITECH PROJECT, 2026
 ** my_world
 ** File description:
-** init file for my_world
+** save menu init
 */
 
 #include "menu/home.h"
 
 static
-void pause_btn_center(csfml_button_t *button,
+void save_btn_center(csfml_button_t *button,
     const sfRenderWindow *window, float y)
 {
     sfFloatRect bounds = {0};
     sfVector2u win_size = {0};
-    float x = 0;
+    float x = 0.0f;
 
     if (!button || !window)
         return;
@@ -25,57 +25,59 @@ void pause_btn_center(csfml_button_t *button,
 }
 
 static
-void play_btn_cb(void *user_data)
+void go_back_to_previous_page(my_world_t *world_data)
 {
-    my_world_t *world_data = user_data;
+    int page_id = -1;
 
     if (!world_data || !world_data->menu)
         return;
-    csfml_menu_close(world_data->menu);
-}
-
-static
-void save_btn_cb(void *user_data)
-{
-    my_world_t *world_data = user_data;
-    int save_page_id = -1;
-
-    if (!world_data || !world_data->menu)
-        return;
-    world_data->save_menu_from_page_id = world_data->pause_page_id;
-    save_page_id = world_data->save_page_id;
-    if (save_page_id < 0)
-        save_page_id = csfml_menu_find_page(world_data->menu, "save");
-    if (save_page_id >= 0)
-        csfml_menu_set_active_page(world_data->menu, save_page_id);
+    page_id = world_data->save_menu_from_page_id;
+    if (page_id < 0)
+        page_id = world_data->pause_page_id;
+    if (page_id >= 0)
+        csfml_menu_set_active_page(world_data->menu, page_id);
     csfml_menu_open(world_data->menu);
 }
 
 static
-void main_menu_btn_cb(void *user_data)
+void save_1_btn_cb(void *user_data)
 {
     my_world_t *world_data = user_data;
-    int main_page_id = 0;
 
     if (!world_data || !world_data->menu)
         return;
-    main_page_id = world_data->main_page_id;
-    if (main_page_id < 0)
-        main_page_id = csfml_menu_find_page(world_data->menu, "main");
-    if (main_page_id >= 0)
-        csfml_menu_set_active_page(world_data->menu, main_page_id);
-    csfml_menu_open(world_data->menu);
+    save_map_to_legend(world_data, 1);
+    go_back_to_previous_page(world_data);
 }
 
 static
-csfml_button_t *create_pause_button(my_world_t *world_data,
+void save_2_btn_cb(void *user_data)
+{
+    my_world_t *world_data = user_data;
+
+    if (!world_data || !world_data->menu)
+        return;
+    save_map_to_legend(world_data, 2);
+    go_back_to_previous_page(world_data);
+}
+
+static
+void back_btn_cb(void *user_data)
+{
+    my_world_t *world_data = user_data;
+
+    go_back_to_previous_page(world_data);
+}
+
+static
+csfml_button_t *create_save_button(my_world_t *world_data,
     const char *label, csfml_button_click_cb_t on_click, float y)
 {
     sfIntRect btn_rect = {50, 455, 308, 95};
     csfml_button_t *button = NULL;
     csfml_button_label_info_t info = {0};
 
-    if (!world_data->menu || !world_data->tex_menu)
+    if (!world_data || !world_data->menu || !world_data->tex_menu)
         return NULL;
     button = csfml_button_create(world_data->tex_menu, &btn_rect,
         on_click, world_data);
@@ -87,25 +89,25 @@ csfml_button_t *create_pause_button(my_world_t *world_data,
     info.color = &sfWhite;
     csfml_button_set_label(button, &info);
     apply_menu_button_sounds(world_data, button);
-    pause_btn_center(button, world_data->ctx->window, y);
+    save_btn_center(button, world_data->ctx->window, y);
     if (csfml_menu_add_button_to_page(world_data->menu,
-            world_data->pause_page_id, button) < 0) {
+        world_data->save_page_id, button) < 0) {
         csfml_button_destroy(button);
         return NULL;
     }
     return button;
 }
 
-void init_menu_pause(my_world_t *world_data)
+void init_menu_save(my_world_t *world_data)
 {
     if (!world_data || !world_data->menu)
         return;
-    world_data->pause_page_id = csfml_menu_add_page(world_data->menu, "pause");
-    if (world_data->pause_page_id < 0)
+    world_data->save_page_id = csfml_menu_add_page(world_data->menu, "save");
+    if (world_data->save_page_id < 0)
         return;
-    load_background(world_data->menu, world_data->pause_page_id,
+    load_background(world_data->menu, world_data->save_page_id,
         world_data->tex_menu, world_data->ctx);
-    create_pause_button(world_data, "Play", play_btn_cb, 360.0f);
-    create_pause_button(world_data, "Save", save_btn_cb, 480.0f);
-    create_pause_button(world_data, "Main menu", main_menu_btn_cb, 600.0f);
+    create_save_button(world_data, "Save 1", save_1_btn_cb, 360.0f);
+    create_save_button(world_data, "Save 2", save_2_btn_cb, 480.0f);
+    create_save_button(world_data, "Back", back_btn_cb, 600.0f);
 }
