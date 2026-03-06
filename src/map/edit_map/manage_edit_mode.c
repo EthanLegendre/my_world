@@ -12,6 +12,14 @@ void manage_edit_mode(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d,
 {
     manage_camera_pos(camera);
     update_iso_point(map_3d, map_2d, camera);
+    if (sfKeyboard_isKeyPressed(sfKeyNum4))
+        game_info->weight += 1;
+    if (sfKeyboard_isKeyPressed(sfKeyNum3))
+        game_info->weight -= 1;
+    if (sfKeyboard_isKeyPressed(sfKeyNum1))
+        game_info->up = 1;
+    if (sfKeyboard_isKeyPressed(sfKeyNum2))
+        game_info->up = 0;
     if (sfMouse_isButtonPressed(sfMouseLeft)){
         update_edit_map(map_3d, game_info, camera);
     }

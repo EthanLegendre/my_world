@@ -69,6 +69,23 @@ void back_btn_cb(void *user_data)
     go_back_to_previous_page(world_data);
 }
 
+static void set_button(csfml_button_t *button,
+    csfml_button_label_info_t *info, my_world_t *world_data, int y)
+{
+    csfml_button_set_label(button, info);
+    apply_menu_button_sounds(world_data, button);
+    save_btn_center(button, world_data->ctx->window, y);
+}
+
+static void set_info(csfml_button_label_info_t *info,
+    const char *label, my_world_t *world_data)
+{
+    info->text = label;
+    info->font = world_data->font_menu;
+    info->char_size = 45;
+    info->color = &sfWhite;
+}
+
 static
 csfml_button_t *create_save_button(my_world_t *world_data,
     const char *label, csfml_button_click_cb_t on_click, float y)
@@ -83,15 +100,10 @@ csfml_button_t *create_save_button(my_world_t *world_data,
         on_click, world_data);
     if (!button)
         return NULL;
-    info.text = label;
-    info.font = world_data->font_menu;
-    info.char_size = 45;
-    info.color = &sfWhite;
-    csfml_button_set_label(button, &info);
-    apply_menu_button_sounds(world_data, button);
-    save_btn_center(button, world_data->ctx->window, y);
+    set_info(&info, label, world_data);
+    set_button(button, &info, world_data, y);
     if (csfml_menu_add_button_to_page(world_data->menu,
-        world_data->save_page_id, button) < 0) {
+            world_data->save_page_id, button) < 0) {
         csfml_button_destroy(button);
         return NULL;
     }

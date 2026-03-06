@@ -17,6 +17,14 @@ void exit_btn_cb(void *user_data)
     sfRenderWindow_close(world_data->ctx->window);
 }
 
+void setting_button(csfml_button_t *b_exit,
+    my_world_t *world_data, csfml_button_label_info_t *info)
+{
+    csfml_button_set_label(b_exit, info);
+    apply_menu_button_sounds(world_data, b_exit);
+    sfSprite_setScale(b_exit->sprite, (sfVector2f){1.0f, 1.0f});
+}
+
 csfml_button_t *init_button_exit(my_world_t *world_data, sfTexture *menu_tex,
     sfFont *font, const sfRenderWindow *window)
 {
@@ -30,9 +38,7 @@ csfml_button_t *init_button_exit(my_world_t *world_data, sfTexture *menu_tex,
         .char_size = 45, .color = &sfWhite };
 
     if (b_exit) {
-        csfml_button_set_label(b_exit, &info);
-        apply_menu_button_sounds(world_data, b_exit);
-        sfSprite_setScale(b_exit->sprite, (sfVector2f){1.0f, 1.0f});
+        setting_button(b_exit, world_data, &info);
         float_rect = sfSprite_getGlobalBounds(b_exit->sprite);
         vector2_u = sfRenderWindow_getSize(window);
         x_position = ((float)vector2_u.x - float_rect.width) / 2.0f;

@@ -20,6 +20,15 @@ void random_btn_cb(void *user_data)
     csfml_menu_close(world_data->menu);
 }
 
+static void set_pos_and_add(csfml_button_t *b_random,
+    int x_position, my_world_t *world_data)
+{
+    sfSprite_setPosition(b_random->sprite,
+        (sfVector2f){x_position, 360.0f});
+    csfml_menu_add_button_to_page(world_data->menu,
+        world_data->main_page_id, b_random);
+}
+
 csfml_button_t *init_button_random(my_world_t *world_data, sfTexture *menu_tex,
     sfFont *font, const sfRenderWindow *window)
 {
@@ -39,8 +48,7 @@ csfml_button_t *init_button_random(my_world_t *world_data, sfTexture *menu_tex,
         float_rect = sfSprite_getGlobalBounds(b_random->sprite);
         vector2_u = sfRenderWindow_getSize(window);
         x_position = ((float)vector2_u.x - float_rect.width) / 2.0f;
-        sfSprite_setPosition(b_random->sprite, (sfVector2f){x_position, 360.0f});
-        csfml_menu_add_button_to_page(world_data->menu, world_data->main_page_id, b_random);
+        set_pos_and_add(b_random, x_position, world_data);
     }
     return b_random;
 }

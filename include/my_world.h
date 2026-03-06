@@ -119,6 +119,7 @@ typedef struct game_info {
     sfTexture *herbe_texture;
     sfTexture *sand_texture;
     sfVector2i mouse_pos;
+    int up;
 }game_info_t;
 
 typedef struct pha {
@@ -195,5 +196,5 @@ void manage_rendus_mode(sfConvexShape ***convex_tab1,
 void update_iso_point(int map_3d[MAP_Y][MAP_X],
     sfVector2f **map_2d, camera_t *camera);
 void change_z_by_select_point(int map_3d[MAP_Y][MAP_X],
-    sfVector2i *mouse_pos, int *int_tab, sfVector2f *current_point);
+    game_info_t *game_info, int *int_tab, sfVector2f *current_point);
 #endif /* !MY_WORLD */

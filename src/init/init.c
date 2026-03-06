@@ -22,6 +22,14 @@ sfTexture *menu_load_texture(csfml_context_t *ctx)
     return menu_tex;
 }
 
+void init_wolrd_data2(csfml_context_t *ctx, my_world_t *world_data)
+{
+    world_data->active_camera = NULL;
+    world_data->active_map_2d = NULL;
+    world_data->active_rendus_dirty = NULL;
+    world_data->active_map_3d = NULL;
+}
+
 static my_world_t *init_word_data(csfml_context_t *ctx)
 {
     my_world_t *world_data = malloc(sizeof(my_world_t));
@@ -42,10 +50,7 @@ static my_world_t *init_word_data(csfml_context_t *ctx)
     world_data->pause_page_id = -1;
     world_data->save_page_id = -1;
     world_data->save_menu_from_page_id = -1;
-    world_data->active_camera = NULL;
-    world_data->active_map_2d = NULL;
-    world_data->active_rendus_dirty = NULL;
-    world_data->active_map_3d = NULL;
+    init_wolrd_data2(ctx, world_data);
     return world_data;
 }
 

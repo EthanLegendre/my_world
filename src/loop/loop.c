@@ -21,6 +21,14 @@ void free_map_2d(sfVector2f **map_2d)
     free(map_2d);
 }
 
+static void free_ca(sfConvexShape ***tab, int i)
+{
+    for (int j = 0; j < MAP_X; j++) {
+        if (tab[i][j])
+            sfConvexShape_destroy(tab[i][j]);
+    }
+}
+
 static
 void free_convex_array(sfConvexShape ***tab)
 {
@@ -28,10 +36,7 @@ void free_convex_array(sfConvexShape ***tab)
         return;
     for (int i = 0; i < MAP_Y; i++) {
         if (tab[i]) {
-            for (int j = 0; j < MAP_X; j++) {
-                if (tab[i][j])
-                    sfConvexShape_destroy(tab[i][j]);
-            }
+            free_ca(tab, i);
             free(tab[i]);
         }
     }
@@ -67,6 +72,26 @@ void load_world_textures(my_world_t *world_data, game_info_t *game_info)
         "world_sand", "assets/image.png");
 }
 
+static void call_functions(game_info_t *game_info,
+    world_runtime_t *runtime, my_world_t *world_data)
+{
+    game_info->weight = 1;
+    game_info->up = 1;
+    load_world_textures(world_data, game_info);
+    world_data->active_camera = runtime->camera;
+    world_data->active_map_2d = runtime->map_2d;
+    world_data->active_rendus_dirty = &runtime->rendus_dirty;
+    world_data->active_map_3d = runtime->map_3d;
+    update_iso_point(runtime->map_3d, runtime->map_2d, runtime->camera);
+    loop_register_input_callbacks(runtime);
+    csfml_context_run(world_data->ctx, loop_on_frame, loop_on_draw, runtime);
+    world_data->active_camera = NULL;
+    world_data->active_map_2d = NULL;
+    world_data->active_rendus_dirty = NULL;
+    world_data->active_map_3d = NULL;
+    free_runtime_resources(runtime);
+}
+
 void game_loop(my_world_t *world_data, camera_t *camera, game_info_t *game_info)
 {
     world_runtime_t runtime = {0};
@@ -87,17 +112,5 @@ void game_loop(my_world_t *world_data, camera_t *camera, game_info_t *game_info)
         free_runtime_resources(&runtime);
         return;
     }
-    load_world_textures(world_data, game_info);
-    world_data->active_camera = runtime.camera;
-    world_data->active_map_2d = runtime.map_2d;
-    world_data->active_rendus_dirty = &runtime.rendus_dirty;
-    world_data->active_map_3d = runtime.map_3d;
-    update_iso_point(runtime.map_3d, runtime.map_2d, runtime.camera);
-    loop_register_input_callbacks(&runtime);
-    csfml_context_run(world_data->ctx, loop_on_frame, loop_on_draw, &runtime);
-    world_data->active_camera = NULL;
-    world_data->active_map_2d = NULL;
-    world_data->active_rendus_dirty = NULL;
-    world_data->active_map_3d = NULL;
-    free_runtime_resources(&runtime);
+    call_functions(game_info, &runtime, world_data);
 }

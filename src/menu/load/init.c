@@ -62,6 +62,15 @@ void back_btn_cb(void *user_data)
     csfml_menu_open(world_data->menu);
 }
 
+static void init_info(csfml_button_label_info_t *info,
+    my_world_t *world_data, const char *label)
+{
+    info->text = label;
+    info->font = world_data->font_menu;
+    info->char_size = 45;
+    info->color = &sfWhite;
+}
+
 static
 csfml_button_t *create_load_button(my_world_t *world_data,
     const char *label, csfml_button_click_cb_t on_click, float y)
@@ -76,15 +85,12 @@ csfml_button_t *create_load_button(my_world_t *world_data,
         on_click, world_data);
     if (!button)
         return NULL;
-    info.text = label;
-    info.font = world_data->font_menu;
-    info.char_size = 45;
-    info.color = &sfWhite;
+    init_info(&info, world_data, label);
     csfml_button_set_label(button, &info);
     apply_menu_button_sounds(world_data, button);
     load_btn_center(button, world_data->ctx->window, y);
     if (csfml_menu_add_button_to_page(world_data->menu,
-        world_data->load_page_id, button) < 0) {
+            world_data->load_page_id, button) < 0) {
         csfml_button_destroy(button);
         return NULL;
     }

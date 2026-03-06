@@ -67,6 +67,15 @@ void main_menu_btn_cb(void *user_data)
     csfml_menu_open(world_data->menu);
 }
 
+static void set_info(csfml_button_label_info_t *info,
+    const char *label, my_world_t *world_data)
+{
+    info->text = label;
+    info->font = world_data->font_menu;
+    info->char_size = 45;
+    info->color = &sfWhite;
+}
+
 static
 csfml_button_t *create_pause_button(my_world_t *world_data,
     const char *label, csfml_button_click_cb_t on_click, float y)
@@ -81,10 +90,7 @@ csfml_button_t *create_pause_button(my_world_t *world_data,
         on_click, world_data);
     if (!button)
         return NULL;
-    info.text = label;
-    info.font = world_data->font_menu;
-    info.char_size = 45;
-    info.color = &sfWhite;
+    set_info(&info, label, world_data);
     csfml_button_set_label(button, &info);
     apply_menu_button_sounds(world_data, button);
     pause_btn_center(button, world_data->ctx->window, y);

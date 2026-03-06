@@ -67,7 +67,7 @@ void update_edit_map(int map_3d[MAP_Y][MAP_X], game_info_t *game_info,
             tab_int[1] = j;
             current_point = project_iso_point(SPACE * j, SPACE * i,
                 map_3d[i][j], camera);
-            change_z_by_select_point(map_3d, &game_info->mouse_pos,
+            change_z_by_select_point(map_3d, game_info,
                 tab_int, &current_point);
         }
     }

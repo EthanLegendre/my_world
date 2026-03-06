@@ -41,5 +41,6 @@ void load_background(csfml_menu_t *menu, int main_page_id,
 
     csfml_menu_set_page_background_rect(menu, main_page_id,
         tex_menu, &panel_rect);
-    main_menu_scale_and_center(menu->pages[main_page_id].background, ctx->window);
+    main_menu_scale_and_center(menu->pages[main_page_id].background,
+        ctx->window);
 }
