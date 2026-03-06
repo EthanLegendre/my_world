@@ -10,29 +10,34 @@
 static void change_z_upper(int *tab, int *tab2,
     game_info_t *gi, int map_3d[MAP_Y][MAP_Y])
 {
-    if (tab[0] + tab2[0] < MAP_Y && tab[1] + tab2[1] < MAP_X)
-        map_3d[tab[0] + tab2[0]][tab[1] + tab2[1]] += gi->weight;
+    int y = tab[0] + tab2[0];
+    int x = tab[1] + tab2[1];
+
+    if (y >= 0 && y < MAP_Y && x >= 0 && x < MAP_X)
+        map_3d[y][x] += gi->weight;
 }
 
 static void change_z_lower(int *tab, int *tab2,
     game_info_t *gi, int map_3d[MAP_Y][MAP_Y])
 {
-    if (tab[0] + tab2[0] < MAP_Y && tab[1] + tab2[1] < MAP_X)
-        map_3d[tab[0] + tab2[0]][tab[1] + tab2[1]] -= gi->weight;
+    int y = tab[0] + tab2[0];
+    int x = tab[1] + tab2[1];
+
+    if (y >= 0 && y < MAP_Y && x >= 0 && x < MAP_X)
+        map_3d[y][x] -= gi->weight;
 }
 
 void update_upper_aroud_point(int *tab,
     game_info_t *gi, int *add, int map_3d[MAP_Y][MAP_X])
 {
-    int *tab2 = malloc(sizeof(int) * 2);
+    int tab2[2];
+    int origin[2] = {tab[0] - (gi->weight / 2), tab[1] - (gi->weight / 2)};
 
-    tab[0] -= (gi->weight / 2);
-    tab[1] -= (gi->weight / 2);
-    for (int k = 0; k <= gi->weight; k++){
-        for (int l = 0; l <= gi->weight; l++){
+    for (int k = 0; k <= gi->weight; k++) {
+        for (int l = 0; l <= gi->weight; l++) {
             tab2[0] = k;
             tab2[1] = l;
-            change_z_upper(tab, tab2, gi, map_3d);
+            change_z_upper(origin, tab2, gi, map_3d);
         }
     }
 }

@@ -32,6 +32,7 @@
     #define HAUTEUR_MIN 0
     #define MAX_HEIGHT_PERLIN 255
     #define PI_F 3.14159265358979323846f
+    #define MAX_WEIGHT 40
 
 typedef struct ip {
     float angle_x;
