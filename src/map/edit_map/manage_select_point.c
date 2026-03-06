@@ -45,15 +45,14 @@ void update_upper_aroud_point(int *tab,
 void update_lower_aroud_point(int *tab,
     game_info_t *gi, int *add, int map_3d[MAP_Y][MAP_X])
 {
-    int *tab2 = malloc(sizeof(int) * 2);
+    int tab2[2];
+    int origin[2] = {tab[0] - (gi->weight / 2), tab[1] - (gi->weight / 2)};
 
-    tab[0] -= (gi->weight / 2);
-    tab[1] -= (gi->weight / 2);
-    for (int k = 0; k <= gi->weight; k++){
-        for (int l = 0; l <= gi->weight; l++){
+    for (int k = 0; k <= gi->weight; k++) {
+        for (int l = 0; l <= gi->weight; l++) {
             tab2[0] = k;
             tab2[1] = l;
-            change_z_lower(tab, tab2, gi, map_3d);
+            change_z_lower(origin, tab2, gi, map_3d);
         }
     }
 }
