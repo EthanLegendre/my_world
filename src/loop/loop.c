@@ -109,6 +109,7 @@ void game_loop(my_world_t *world_data, camera_t *camera, game_info_t *game_info)
         return;
     }
     if (fill_map_with_perlin(runtime.map_3d, world_data->map_seed) != 0) {
+        game_info->base_seed = world_data->map_seed;
         free_runtime_resources(&runtime);
         return;
     }

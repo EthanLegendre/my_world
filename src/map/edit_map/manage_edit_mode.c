@@ -23,4 +23,6 @@ void manage_edit_mode(int map_3d[MAP_Y][MAP_X], sfVector2f **map_2d,
     if (sfMouse_isButtonPressed(sfMouseLeft)){
         update_edit_map(map_3d, game_info, camera);
     }
+    if (sfKeyboard_isKeyPressed(sfKeyR))
+        fill_map_with_perlin(map_3d, game_info->base_seed);
 }

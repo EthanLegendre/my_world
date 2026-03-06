@@ -120,6 +120,7 @@ typedef struct game_info {
     sfTexture *sand_texture;
     sfVector2i mouse_pos;
     int up;
+    unsigned int base_seed;
 }game_info_t;
 
 typedef struct pha {
