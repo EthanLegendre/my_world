@@ -36,6 +36,7 @@ make
 - R Reset the seed
 - A Zoomed out
 - E Zoomed
+- V Change view mode
 - 1 Height increased mode
 - 2 Height decrease mode
 - 3 Decreased the radius
